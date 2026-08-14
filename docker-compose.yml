@@ -11,7 +11,7 @@ services:
       - JWT_EXPIRATION_MS=${BACKEND_JWT_EXPIRATION_MS}
       - FRONTEND_URL=http://frontend:${FRONTEND_PORT}
   frontend:
-    build: ./frontend-nextjs
+    build: ./frontend
     ports: ["${FRONTEND_PORT}:${FRONTEND_PORT}"]
     depends_on:
       - backend
