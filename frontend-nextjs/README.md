@@ -1,28 +1,40 @@
 # Frontend Next.js - Sistema de Nómina
 
-Migración del frontend legacy (HTML + JS) a Next.js con App Router y diseño minimalista financiero.
+Aplicación frontend en Next.js del Sistema de Nómina desarrollado en Next.js.
 
 ## Requisitos
 
 - Node.js 20+
-- Backend ejecutándose (por defecto en `http://localhost:3000`)
+- Backend ejecutándose (por defecto en `http://localhost:8080`)
+
+Las instrucciones para levantar el backend se encuentran en su respectivo módulo, revisar [/backend/README.md](/backend/README.md).
 
 ## Configuración
 
-Crear archivo `.env.local`:
+Variables de entorno:
 
 ```env
-BACKEND_API_URL=http://localhost:3000
+BACKEND_API_URL=http://localhost:8080
+PORT=3000
 ```
 
 ## Ejecutar
 
+### Entorno local
+
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 Abrir: `http://localhost:3000` (o el puerto que asigne Next.js).
+
+### Con Docker
+
+```bash
+docker build -t frontend-nomina:latest .
+docker run -d -p 3000:3000 --name frontend-nomina frontend-nomina:latest
+```
 
 ## Rutas principales
 
