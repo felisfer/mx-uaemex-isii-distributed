@@ -27,7 +27,7 @@ public class AuthController {
     public ResponseEntity<@NonNull JwtResponse> login(@Valid @RequestBody LoginRequest request) {
         var res = authService.login(request);
         var cookie = ResponseCookie.from("access_token", res.token())
-                .httpOnly(false)
+                .httpOnly(true)
                 .path("/")
                 .maxAge(res.expiresInMs() / 1000)
                 .build();
