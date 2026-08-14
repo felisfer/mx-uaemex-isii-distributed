@@ -75,6 +75,9 @@ export default function RegisterPage() {
   return (
     <main className="container" style={{ paddingTop: "2rem", paddingBottom: "2rem" }}>
       <section className="card" style={{ maxWidth: 560, margin: "0 auto" }}>
+        <a href="/" style={{ display: "block", marginBottom: "1rem" }}>
+          Volver a la página principal
+        </a>
         <h1>Registrar empleado</h1>
         {error ? <div className="alert alert-error">{error}</div> : null}
         {success ? <div className="alert alert-success">{success}</div> : null}

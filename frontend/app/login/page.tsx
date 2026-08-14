@@ -34,6 +34,9 @@ export default function LoginPage() {
   return (
     <main className="container" style={{ paddingTop: "3rem" }}>
       <section className="card" style={{ maxWidth: 460, margin: "0 auto" }}>
+        <a href="/" style={{ display: "block", marginBottom: "1rem" }}>
+          Volver a la página principal
+        </a>
         <h1>Iniciar sesión</h1>
         {error ? <div className="alert alert-error">{error}</div> : null}
         <form onSubmit={onSubmit}>
