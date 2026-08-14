@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ApiError, LoginRequest } from "@/types/api";
+import Link from "next/dist/client/link";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,9 +35,9 @@ export default function LoginPage() {
   return (
     <main className="container" style={{ paddingTop: "3rem" }}>
       <section className="card" style={{ maxWidth: 460, margin: "0 auto" }}>
-        <a href="/" style={{ display: "block", marginBottom: "1rem" }}>
+        <Link href="/" style={{ display: "block", marginBottom: "1rem" }}>
           Volver a la página principal
-        </a>
+        </Link>
         <h1>Iniciar sesión</h1>
         {error ? <div className="alert alert-error">{error}</div> : null}
         <form onSubmit={onSubmit}>
