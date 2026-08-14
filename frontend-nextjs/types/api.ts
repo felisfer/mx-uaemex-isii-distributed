@@ -29,7 +29,7 @@ export type Empleado = {
   nombre: string;
   apellidos: string;
   correo: string;
-  esAdmin: boolean;
+  esAdministrador: boolean;
 };
 
 export type Nomina = {

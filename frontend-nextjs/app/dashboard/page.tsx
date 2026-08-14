@@ -34,7 +34,7 @@ export default function DashboardPage() {
     });
   }, [router]);
 
-  const totalAdmins = useMemo(() => empleados.filter((item) => item.esAdmin).length, [empleados]);
+  const totalAdmins = useMemo(() => empleados.filter((item) => item.esAdministrador).length, [empleados]);
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
