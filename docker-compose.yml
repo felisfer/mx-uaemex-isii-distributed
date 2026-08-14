@@ -1,10 +1,22 @@
 services:
+  database:
+    image: postgres:17-alpine
+    environment:
+      - POSTGRES_USER=${BACKEND_DB_USERNAME}
+      - POSTGRES_PASSWORD=${BACKEND_DB_PASSWORD}
+      - POSTGRES_DB=${BACKEND_DB_NAME}
+    ports: ["${BACKEND_DB_PORT}:${BACKEND_DB_PORT}"]
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./database:/docker-entrypoint-initdb.d
   backend:
     build: ./backend
     ports: ["${BACKEND_PORT}:${BACKEND_PORT}"]
+    depends_on:
+      - database
     environment:
       - PORT=${BACKEND_PORT}
-      - DB_URL=${BACKEND_DB_URL}
+      - DB_URL=jdbc:postgresql://database:${BACKEND_DB_PORT}/${BACKEND_DB_NAME}
       - DB_USERNAME=${BACKEND_DB_USERNAME}
       - DB_PASSWORD=${BACKEND_DB_PASSWORD}
       - JWT_SECRET=${BACKEND_JWT_SECRET}
@@ -18,3 +30,5 @@ services:
     environment:
       - BACKEND_API_URL=http://backend:${BACKEND_PORT}
       - PORT=${FRONTEND_PORT}
+volumes:
+  db_data:
