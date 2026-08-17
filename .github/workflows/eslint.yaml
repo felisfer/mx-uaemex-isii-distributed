@@ -4,9 +4,13 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - 'frontend/**'
   push:
     branches:
       - main
+    paths:
+      - 'frontend/**'
 
 jobs:
   lint-and-build:
