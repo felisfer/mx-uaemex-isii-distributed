@@ -16,7 +16,7 @@ Sistema de gestión de nómina, con **backend API REST** (Spring Boot) y **front
 
 ```
 mx-uaemex-isii-distributed/
-├── .github/workflows/   # CI: eslint.yaml, maven.yaml
+├── .github/workflows/   # CI: eslint.yaml, maven.yaml, backend-docker-publish.yml, frontend-docker-publish.yml
 ├── backend/             # API REST en Java + Spring Boot
 │   ├── src/              # capas: config, logic, persistence, presentation
 │   └── docs/              # manual de usuario, diagramas UML, imágenes
