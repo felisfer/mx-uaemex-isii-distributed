@@ -33,6 +33,6 @@ services:
     environment:
       - BACKEND_API_URL=http://backend:${BACKEND_PORT}
       - PORT=${FRONTEND_PORT}
-      - HOSTNAME=${HOSTNAME}
+      - ALLOWED_HOSTNAMES=${ALLOWED_HOSTNAMES}
 volumes:
   db_data:
