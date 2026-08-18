@@ -7,7 +7,9 @@
 # To ensure security and compatibility, regularly update the NODE_VERSION ARG to the latest LTS version.
 ARG NODE_VERSION=24.13.0-slim
 
-FROM node:${NODE_VERSION} AS dependencies
+FROM node:${NODE_VERSION} AS base
+
+FROM base AS dependencies
 
 # Set working directory
 WORKDIR /app
@@ -33,7 +35,7 @@ RUN --mount=type=cache,target=/root/.npm \
 # Stage 2: Build Next.js application in standalone mode
 # ============================================
 
-FROM node:${NODE_VERSION} AS builder
+FROM base AS builder
 
 # Set working directory
 WORKDIR /app
@@ -72,7 +74,7 @@ RUN if [ -f package-lock.json ]; then \
 # Stage 3: Run Next.js application
 # ============================================
 
-FROM node:${NODE_VERSION} AS runner
+FROM base AS runner
 
 # Set working directory
 WORKDIR /app
@@ -111,3 +113,27 @@ EXPOSE ${PORT}
 
 # Start Next.js standalone server
 CMD ["node", "server.js"]
+
+# ============================================
+# Stage 4: Run development server
+# ============================================
+
+FROM base AS dev
+
+ENV NODE_ENV=development
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+WORKDIR /app
+
+COPY --from=dependencies /app/node_modules ./node_modules
+
+COPY . .
+
+ENV NEXT_TELEMETRY_DISABLED=1
+
+ENV WATCHPACK_POLLING=true
+
+EXPOSE ${PORT}
+
+CMD ["npm", "run", "dev"]

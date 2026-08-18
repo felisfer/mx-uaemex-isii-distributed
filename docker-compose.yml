@@ -24,7 +24,9 @@ services:
       - FRONTEND_URL=http://frontend:${FRONTEND_PORT}
       - SPRING_PROFILES_ACTIVE=${BACKEND_PROFILE}
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      target: ${FRONTEND_TARGET}
     ports: ["${FRONTEND_PORT}:${FRONTEND_PORT}"]
     depends_on:
       - backend
