@@ -22,6 +22,7 @@ services:
       - JWT_SECRET=${BACKEND_JWT_SECRET}
       - JWT_EXPIRATION_MS=${BACKEND_JWT_EXPIRATION_MS}
       - FRONTEND_URL=http://frontend:${FRONTEND_PORT}
+      - SPRING_PROFILES_ACTIVE=${BACKEND_PROFILE}
   frontend:
     build: ./frontend
     ports: ["${FRONTEND_PORT}:${FRONTEND_PORT}"]
