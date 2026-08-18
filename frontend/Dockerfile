@@ -74,7 +74,7 @@ RUN if [ -f package-lock.json ]; then \
 # Stage 3: Run Next.js application
 # ============================================
 
-FROM base AS runner
+FROM base AS prod
 
 # Set working directory
 WORKDIR /app

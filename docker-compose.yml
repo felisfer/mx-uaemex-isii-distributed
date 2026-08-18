@@ -22,11 +22,11 @@ services:
       - JWT_SECRET=${BACKEND_JWT_SECRET}
       - JWT_EXPIRATION_MS=${BACKEND_JWT_EXPIRATION_MS}
       - FRONTEND_URL=http://frontend:${FRONTEND_PORT}
-      - SPRING_PROFILES_ACTIVE=${BACKEND_PROFILE}
+      - SPRING_PROFILES_ACTIVE=${ENVIRONMENT_TARGET}
   frontend:
     build:
       context: ./frontend
-      target: ${FRONTEND_TARGET}
+      target: ${ENVIRONMENT_TARGET}
     ports: ["${FRONTEND_PORT}:${FRONTEND_PORT}"]
     depends_on:
       - backend
