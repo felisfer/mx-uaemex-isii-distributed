@@ -22,13 +22,17 @@ services:
       - JWT_SECRET=${BACKEND_JWT_SECRET}
       - JWT_EXPIRATION_MS=${BACKEND_JWT_EXPIRATION_MS}
       - FRONTEND_URL=http://frontend:${FRONTEND_PORT}
+      - SPRING_PROFILES_ACTIVE=${ENVIRONMENT_TARGET}
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      target: ${ENVIRONMENT_TARGET}
     ports: ["${FRONTEND_PORT}:${FRONTEND_PORT}"]
     depends_on:
       - backend
     environment:
       - BACKEND_API_URL=http://backend:${BACKEND_PORT}
       - PORT=${FRONTEND_PORT}
+      - ALLOWED_HOSTNAMES=${ALLOWED_HOSTNAMES}
 volumes:
   db_data:

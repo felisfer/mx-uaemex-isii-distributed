@@ -16,7 +16,7 @@ Sistema de gestión de nómina, con **backend API REST** (Spring Boot) y **front
 
 ```
 mx-uaemex-isii-distributed/
-├── .github/workflows/   # CI: eslint.yaml, maven.yaml
+├── .github/workflows/   # CI: eslint.yaml, maven.yaml, backend-docker-publish.yml, frontend-docker-publish.yml
 ├── backend/             # API REST en Java + Spring Boot
 │   ├── src/              # capas: config, logic, persistence, presentation
 │   └── docs/              # manual de usuario, diagramas UML, imágenes
@@ -35,20 +35,26 @@ mx-uaemex-isii-distributed/
 1. Crea un `.env` en la raíz:
 
 ```env
-# Base de datos
-BACKEND_DB_USERNAME=postgres
-BACKEND_DB_PASSWORD=tu-password-seguro
-BACKEND_DB_NAME=nomina
-BACKEND_DB_PORT=5432
-
 # Backend
 BACKEND_PORT=3000
-BACKEND_JWT_SECRET=tu-secreto-jwt-de-al-menos-256-bits
+BACKEND_DB_USERNAME=postgres
+BACKEND_DB_PASSWORD=123
+BACKEND_DB_NAME=nomina
+BACKEND_DB_PORT=5432
+BACKEND_JWT_SECRET=p4zDJcrnZxKJ5iHpsIa3r4AE0P2GAtv0bhfbyrP8vv7UtH223l
 BACKEND_JWT_EXPIRATION_MS=86400000
 
 # Frontend
 FRONTEND_PORT=3001
+ALLOWED_HOSTNAMES=localhost # e.g. 192.168.100.34,host-name.local,mi-dominio.com
+
+# General
+ENVIRONMENT_TARGET=dev # dev/prod
 ```
+
+Debido a la configuración por defecto de Next.js es necesario específicar el hostname autorizado mediante la variable de entorno ALLOWED_HOSTNAMES cuando se use herramientas como tunnels o ngrok.
+Para entornos de desarollo se puede usar `localhost`, `127.0.0.1`, el hostname del equipo `*.local` o un dominio `mi-sitio.com`.
+En entornos productivos se debe de usar bajo un certificado TLS configurado mediante un proxy como NGINX.
 
 2. Levanta los servicios:
 
@@ -75,6 +81,7 @@ export DB_URL="jdbc:postgresql://localhost:5432/nomina"
 export DB_USERNAME="postgres"
 export DB_PASSWORD="tu-password"
 export PORT=3000
+export SPRING_PROFILES_ACTIVE=dev
 mvn spring-boot:run
 ```
 
