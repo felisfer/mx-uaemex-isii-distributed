@@ -33,6 +33,7 @@ public class AuthController {
         var cookie = ResponseCookie.from("access_token", res.token())
                 .httpOnly(true)
                 .secure(secureCookie)
+                .sameSite("lax")
                 .path("/")
                 .maxAge(res.expiresInMs() / 1000)
                 .build();
