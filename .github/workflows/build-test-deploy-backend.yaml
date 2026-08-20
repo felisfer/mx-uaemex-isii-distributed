@@ -51,7 +51,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
-    - name: Test and build with Maven
+    - name: Verify and build with Maven
       run: mvn -B verify
   
   security-scan:
