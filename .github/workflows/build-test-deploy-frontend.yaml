@@ -79,6 +79,10 @@ jobs:
     needs: changes
     runs-on: ubuntu-latest
     if: needs.changes.outputs.frontend_changed == 'true'
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
 
     defaults:
       run:

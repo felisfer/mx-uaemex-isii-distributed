@@ -64,6 +64,10 @@ jobs:
     needs: changes
     runs-on: ubuntu-latest
     if: needs.changes.outputs.backend_changed == 'true'
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
 
     steps:
       - uses: actions/checkout@v7
