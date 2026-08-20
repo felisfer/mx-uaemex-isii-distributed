@@ -31,7 +31,7 @@ jobs:
           backend: ["backend/**"]
       
   test-and-build:
-    name: Test and build with Maven
+    name: Test and build with Maven (backend)
     needs: changes
     runs-on: ubuntu-latest
     if: needs.changes.outputs.backend_changed == 'true'
@@ -55,7 +55,7 @@ jobs:
       run: mvn -B verify
   
   security-scan:
-    name: Security scans
+    name: Security scans (backend)
     needs: changes
     runs-on: ubuntu-latest
     if: needs.changes.outputs.backend_changed == 'true'
@@ -88,7 +88,7 @@ jobs:
 
   publish-docker-image:
     needs: [test-and-build, security-scan]
-    name: Publish Docker image into GHCR
+    name: Publish Docker image into GHCR (backend)
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
 
