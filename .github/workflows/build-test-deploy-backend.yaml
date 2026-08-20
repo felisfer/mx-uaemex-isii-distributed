@@ -67,8 +67,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      # Scan for secrets using Gitleaks
+      # https://github.com/gitleaks/gitleaks-action
       - name: Secret scanning
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
