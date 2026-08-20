@@ -9,6 +9,10 @@ on:
   schedule:
     - cron: '0 5 * * *'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
@@ -34,7 +38,7 @@ jobs:
       if: github.event_name == 'push' || github.event_name == 'pull_request'
       with:
         filters: |
-          frontend: ["frontend/**"]
+          frontend_changed: ["frontend/**"]
       
   lint-and-build:
     name: Lint, type-check y build (frontend)
@@ -79,6 +83,10 @@ jobs:
     needs: changes
     runs-on: ubuntu-latest
     if: needs.changes.outputs.frontend_changed == 'true'
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
 
     defaults:
       run:
