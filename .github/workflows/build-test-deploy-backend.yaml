@@ -66,6 +66,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       # Scan for secrets using Gitleaks
       # https://github.com/gitleaks/gitleaks-action
