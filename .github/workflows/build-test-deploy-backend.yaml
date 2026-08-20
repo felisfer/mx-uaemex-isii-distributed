@@ -87,11 +87,22 @@ jobs:
           severity: HIGH,CRITICAL
           exit-code: 1
 
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '${{ env.JAVA_VERSION }}'
+          distribution: 'temurin'
+          cache: maven
+
       - name: CodeQL init
         uses: github/codeql-action/init@v3
         with:
           languages: java
-          
+
+      - name: Build backend for CodeQL
+        working-directory: ./backend
+        run: mvn -B -DskipTests compile          
+
       - name: CodeQL analyze
         uses: github/codeql-action/analyze@v3
 
