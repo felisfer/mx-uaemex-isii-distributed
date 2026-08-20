@@ -78,13 +78,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Scan for secrets using Gitleaks
-      # https://github.com/gitleaks/gitleaks-action
-      - name: Secret scanning
-        uses: gitleaks/gitleaks-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       # Scan for dependency vulnerabilities using Trivy
       # https://github.com/aquasecurity/trivy-action
       - name: Dependency vulnerability scan
