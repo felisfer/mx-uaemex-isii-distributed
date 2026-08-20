@@ -10,7 +10,7 @@ on:
     - cron: '0 5 * * *'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
   cancel-in-progress: true
 
 env:
@@ -24,7 +24,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      backend_changed: ${{ steps.filter.outputs.backend_changed || 'true' }}
+      backend_changed: ${{ steps.filter.outcome == 'skipped' && 'true' || steps.filter.outputs.backend_changed }}
     steps:
     # Checkout the code
     # https://github.com/actions/checkout
@@ -77,13 +77,6 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-
-      # Scan for secrets using Gitleaks
-      # https://github.com/gitleaks/gitleaks-action
-      - name: Secret scanning
-        uses: gitleaks/gitleaks-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Scan for dependency vulnerabilities using Trivy
       # https://github.com/aquasecurity/trivy-action

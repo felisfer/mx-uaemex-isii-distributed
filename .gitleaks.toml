@@ -1,0 +1,11 @@
+title = "gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Excluye fixtures de test y documentación con claves de ejemplo"
+paths = [
+    '''backend/src/test/.*''',
+    '''.*\.md$''',
+]
