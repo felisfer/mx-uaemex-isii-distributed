@@ -5,6 +5,9 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 5 * * *'
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -18,7 +21,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      frontend_changed: ${{ steps.filter.outputs.frontend_changed }}
+      frontend_changed: ${{ steps.filter.outputs.frontend_changed || 'true' }}
     steps:
     # Checkout the code
     # https://github.com/actions/checkout
@@ -28,6 +31,7 @@ jobs:
     # https://github.com/dorny/paths-filter
     - uses: dorny/paths-filter@v4.0.3
       id: filter
+      if: github.event_name == 'push' || github.event_name == 'pull_request'
       with:
         filters: |
           frontend: ["frontend/**"]
@@ -36,7 +40,7 @@ jobs:
     name: Lint, type-check y build (frontend)
     needs: changes
     runs-on: ubuntu-latest
-    if: needs.changes.outputs.frontend_changed == 'true'
+    if: needs.changes.outputs.frontend_changed == 'true' && (github.event_name == 'push' || github.event_name == 'pull_request')
 
     defaults:
       run:
@@ -82,9 +86,13 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
+      # Scan for secrets using Gitleaks
+      # https://github.com/gitleaks/gitleaks-action
       - name: Secret scanning
-        uses: gitleaks/gitleaks-action@v2
+        uses: gitleaks/gitleaks-action@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -118,7 +126,7 @@ jobs:
     needs: [lint-and-build, security-scan]
     name: Publish Docker image into GHCR (frontend)
     runs-on: ubuntu-latest
-    if: github.event_name != 'pull_request'
+    if: github.event_name == 'push'
 
     permissions:
       contents: read
@@ -167,7 +175,7 @@ jobs:
       # Scan image for vulnerabilities
       # https://github.com/aquasecurity/trivy-action
       - name: Scan image for vulnerabilities
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           severity: CRITICAL,HIGH
