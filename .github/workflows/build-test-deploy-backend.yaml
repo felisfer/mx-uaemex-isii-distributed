@@ -24,7 +24,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      backend_changed: ${{ steps.filter.outputs.backend_changed || 'true' }}
+      backend_changed: ${{ steps.filter.outcome == 'skipped' && 'true' || steps.filter.outputs.backend_changed }}
     steps:
     # Checkout the code
     # https://github.com/actions/checkout
