@@ -33,7 +33,7 @@ jobs:
           frontend: ["frontend/**"]
       
   lint-and-build:
-    name: Lint, type-check y build
+    name: Lint, type-check y build (frontend)
     needs: changes
     runs-on: ubuntu-latest
     if: needs.changes.outputs.frontend_changed == 'true'
@@ -71,7 +71,7 @@ jobs:
         run: pnpm run build
   
   security-scan:
-    name: Security scans
+    name: Security scans (frontend)
     needs: changes
     runs-on: ubuntu-latest
     if: needs.changes.outputs.frontend_changed == 'true'
@@ -116,7 +116,7 @@ jobs:
 
   publish-docker-image:
     needs: [lint-and-build, security-scan]
-    name: Publish Docker image into GHCR
+    name: Publish Docker image into GHCR (frontend)
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
 
