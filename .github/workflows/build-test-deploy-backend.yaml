@@ -119,7 +119,7 @@ jobs:
     needs: [test-and-build, security-scan]
     name: Publish Docker image into GHCR (backend)
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish == 'true')
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish)
 
     permissions:
       contents: read

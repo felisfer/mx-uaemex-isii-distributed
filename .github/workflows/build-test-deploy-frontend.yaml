@@ -133,7 +133,7 @@ jobs:
     needs: [lint-and-build, security-scan]
     name: Publish Docker image into GHCR (frontend)
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'  || (github.event_name == 'workflow_dispatch' && inputs.publish == 'true')
+    if: github.event_name == 'push'  || (github.event_name == 'workflow_dispatch' && inputs.publish)
 
     permissions:
       contents: read
