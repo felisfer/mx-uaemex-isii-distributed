@@ -53,8 +53,10 @@ jobs:
     - name: Checkout del código
       uses: actions/checkout@v7
 
+    # Set up Java JDK for Maven build
+    # https://github.com/actions/setup-java
     - name: Set up JDK
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5.7.0
       with:
         java-version: '${{ env.JAVA_VERSION }}'
         distribution: 'temurin'
@@ -89,7 +91,7 @@ jobs:
           exit-code: 1
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5.7.0
         with:
           java-version: '${{ env.JAVA_VERSION }}'
           distribution: 'temurin'
