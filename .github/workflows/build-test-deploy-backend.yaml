@@ -121,6 +121,10 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish)
 
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ github.event_name }}
+      cancel-in-progress: false
+
     permissions:
       contents: read
       packages: write
