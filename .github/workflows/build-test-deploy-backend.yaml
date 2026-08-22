@@ -30,7 +30,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      backend_changed: ${{ steps.filter.outcome == 'skipped' && 'true' || steps.filter.outputs.backend_changed }}
+      backend_changed: ${{ github.event_name != 'push' && github.event_name != 'pull_request' || steps.filter.outputs.backend_changed == 'true' }}
     steps:
     # Checkout the code
     # https://github.com/actions/checkout
@@ -40,51 +40,40 @@ jobs:
     # https://github.com/dorny/paths-filter
     - uses: dorny/paths-filter@v4.0.3
       id: filter
-      if: github.event_name == 'push' || github.event_name == 'pull_request'
       with:
         filters: |
           backend_changed: ["backend/**"]
-      
-  test-and-build:
-    name: Test and build with Maven (backend)
+  
+  test-build-and-scan:
+    name: Test and build with Maven + Security scan (backend)
     needs: changes
     runs-on: ubuntu-latest
     if: needs.changes.outputs.backend_changed == 'true'
+
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
 
     defaults:
       run:
         working-directory: ./backend
 
     steps:
-    - name: Checkout del código
-      uses: actions/checkout@v7
-
-    # Set up Java JDK for Maven build
-    # https://github.com/actions/setup-java
-    - name: Set up JDK
-      uses: actions/setup-java@v5.7.0
-      with:
-        java-version: '${{ env.JAVA_VERSION }}'
-        distribution: 'temurin'
-        cache: maven
-
-    - name: Verify and build with Maven
-      run: mvn -B verify
-  
-  security-scan:
-    name: Security scans (backend)
-    needs: changes
-    runs-on: ubuntu-latest
-    if: needs.changes.outputs.backend_changed == 'true'
-    permissions:
-      contents: read
-      security-events: write
-      actions: read
-
-    steps:
+      # Checkout the code
+      # https://github.com/actions/checkout
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+
+      # Set up Java JDK for Maven build
+      # https://github.com/actions/setup-java
+      - name: Set up JDK
+        uses: actions/setup-java@v5.7.0
+        with:
+          java-version: '${{ env.JAVA_VERSION }}'
+          distribution: 'temurin'
+          cache: maven
 
       # Scan for dependency vulnerabilities using Trivy
       # https://github.com/aquasecurity/trivy-action
@@ -96,27 +85,23 @@ jobs:
           severity: HIGH,CRITICAL
           exit-code: 1
 
-      - name: Set up JDK
-        uses: actions/setup-java@v5.7.0
-        with:
-          java-version: '${{ env.JAVA_VERSION }}'
-          distribution: 'temurin'
-          cache: maven
-
+      # CodeQL initialization
+      # https://github.com/github/codeql-action
       - name: CodeQL init
         uses: github/codeql-action/init@v4
         with:
           languages: java
 
-      - name: Build backend for CodeQL
-        working-directory: ./backend
-        run: mvn -B -DskipTests compile          
+      - name: Verify and build with Maven
+        run: mvn -B verify      
 
+      # CodeQL analyze
+      # https://github.com/github/codeql-action
       - name: CodeQL analyze
         uses: github/codeql-action/analyze@v4
 
   publish-docker-image:
-    needs: [test-and-build, security-scan]
+    needs: test-build-and-scan
     name: Publish Docker image into GHCR (backend)
     runs-on: ubuntu-latest
     if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish)
