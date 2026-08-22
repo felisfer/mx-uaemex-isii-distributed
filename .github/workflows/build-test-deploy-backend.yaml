@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [ "main" ]
   workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish Docker image into GHCR (backend)'
+        required: false
+        default: false
+        type: boolean
   schedule:
     - cron: '0 5 * * *'
 
@@ -43,7 +49,7 @@ jobs:
     name: Test and build with Maven (backend)
     needs: changes
     runs-on: ubuntu-latest
-    if: needs.changes.outputs.backend_changed == 'true' && (github.event_name == 'push' || github.event_name == 'pull_request')
+    if: needs.changes.outputs.backend_changed == 'true'
 
     defaults:
       run:
@@ -113,7 +119,7 @@ jobs:
     needs: [test-and-build, security-scan]
     name: Publish Docker image into GHCR (backend)
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish == 'true')
 
     permissions:
       contents: read
@@ -159,6 +165,21 @@ jobs:
             type=raw,value=latest
             type=raw,value={{date 'YYYYMMDD-HHmmss'}}
       
+      # Build and push Docker image with Buildx
+      # Build once, load locally only — nothing reaches the registry yet
+      # https://github.com/docker/build-push-action
+      - name: Build image (local only)
+        id: build
+        uses: docker/build-push-action@v7.3.0
+        with:
+          context: ./backend
+          load: true
+          push: false
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
       # Scan image for vulnerabilities
       # https://github.com/aquasecurity/trivy-action
       - name: Scan image for vulnerabilities
@@ -168,14 +189,14 @@ jobs:
           severity: CRITICAL,HIGH
           exit-code: 1
 
-      # Build and push Docker image with Buildx
-      # https://github.com/docker/build-push-action
-      - name: Build and push Docker image
+      # Only reached if the scan above passed, push reuses the gha cache
+      # so this is essentially free, no rebuild happens
+      - name: Push Docker image to registry
         id: build-and-push
         uses: docker/build-push-action@v7.3.0
         with:
           context: ./backend
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
