@@ -98,7 +98,7 @@ jobs:
           cache: maven
 
       - name: CodeQL init
-        uses: github/codeql-action/init@v3
+        uses: github/codeql-action/init@v4
         with:
           languages: java
 
@@ -107,7 +107,7 @@ jobs:
         run: mvn -B -DskipTests compile          
 
       - name: CodeQL analyze
-        uses: github/codeql-action/analyze@v3
+        uses: github/codeql-action/analyze@v4
 
   publish-docker-image:
     needs: [test-and-build, security-scan]
